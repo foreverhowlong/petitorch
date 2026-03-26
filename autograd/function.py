@@ -9,24 +9,27 @@ class Context:
         self.prev_edges = []
         self.backward_op = None
         # used for saving meta data like shape
-        self.saved_kwargs = {} 
-        
+        self.saved_meta = {} 
+
     def save_tensor(self, *tensors):
         self.saved_tensors = tensors
         
     def save_meta(self, **kwargs):
         #if the original tensor is not saved, this can save the metadata
-        self.saved_kwargs.update(kwargs)
-    
+        self.saved_meta.update(kwargs)
+        
 class NoOpContext:
     def save_tensor(self,*ndarrays):
         pass
     def save_meta(self,**kwargs):
         pass
 
-#Function doesn't store any info. the apply method instanciate context, which consititute the compute graph
+#Function doesn't store any info. the apply() method instanciate context, which consititute the compute graph
+#the base class of all the operators
 class Function:
     
+    #The most important function in constructing the compute graph
+    #all of the operations(+ * @,...) regarding Tensor are registered into the compute graph here
     @classmethod
     def apply(cls,*args)-> Tensor: 
         tensors = [arg for arg in args if isinstance(arg,Tensor)]
@@ -35,15 +38,20 @@ class Function:
         if requires_grad:
             ctx = Context()
         else:
+            #if we don't need grad, instanciate this dummy context
+            #so that we can reuse our forward() method.
             ctx = NoOpContext()
         result = Tensor(cls.forward(ctx,*ndarrays),requires_grad=requires_grad)
         if not requires_grad:
             return result
+        #the edge of the compute graph.
         ctx.prev_edges = tensors
         ctx.backward_op = cls
         result.grad_fn = ctx
         return result
-        
+    
+    
+    #this two methods should be implemented in its children class.
     @classmethod
     def forward(cls,ctx: Context,*ndarrays)-> np.ndarray:
         raise NotImplementedError

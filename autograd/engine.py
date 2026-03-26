@@ -19,7 +19,7 @@ def backward(root_tensor:Tensor):
     # initialize the grad of the starting point
     grad_dict[root_tensor.grad_fn] = np.ones_like(root_tensor.data)
     
-    #topological sort: make sure that the error has been completed before calling its backwards
+    #topological sort: make sure that the error has been calculated before calling its backwards
     topo_order = []
     def topo_sort(ctx, visited=None):
     
