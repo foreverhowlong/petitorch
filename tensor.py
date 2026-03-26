@@ -1,18 +1,18 @@
 import numpy as np
 class Tensor:
-    def __init__(self,data, grad: np.ndarray =None,  grad_fn = None,requires_grad = False,is_leaf=False):
+    def __init__(self,data, grad: np.ndarray =None,  grad_fn = None,requires_grad = False):
         self.data = np.array(data,dtype=np.float32)
         self.grad = grad
         #grad_fn stores a context
         self.grad_fn = grad_fn
         self.requires_grad = requires_grad
-        self.is_leaf = is_leaf
+
     
     #make debugging easier
     def __repr__(self):
         return f"Tensor:{self.data},grad_fn:{self.grad_fn}"
     
-    #wrapper to enable natural programming
+    #wrapper to enable natural writing.
     def __add__(self, other):
         if not isinstance(other, Tensor):
             other = Tensor(other) 
