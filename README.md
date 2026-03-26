@@ -1,13 +1,13 @@
-#petitorch
+# Petitorch
 
 petitorch is a minimalistic, automatic differentiation framework built entirely from scratch using pure Python and NumPy.
 
-It is designed to replicate the underlying architecture of PyTorch, specifically focusing on the dynamic computational graph (Define-by-Run), the dynamic dispatcher mechanism, and the Adjoint Method (Vector-Jacobian Product) for reverse-mode automatic differentiation (grad pull-back).
+It is designed to replicate the underlying architecture of PyTorch, specifically focusing on the dynamic computational graph (Define-by-Run), the dynamic dispatcher mechanism, and the Adjoint Method (Vector-Jacobian Product) for reverse-mode automatic differentiation (gradient pull-back).
 
-Architecture and Module Implementation
+## Architecture and Module Implementation
 
 The framework is strictly decoupled into several core components: data containers, the autograd engine, mathematical operators, and high-level neural network abstractions.
-1. Core Data Structure (tensor.py)
+### 1. Core Data Structure (tensor.py)
 
 The Tensor class serves as the fundamental data carrier. It is intentionally kept lightweight and does not implement mathematical logic directly.
 
@@ -15,7 +15,7 @@ The Tensor class serves as the fundamental data carrier. It is intentionally kep
 
     Syntactic Sugar: It overrides Python magic methods (e.g., __add__, __mul__, __matmul__) to route mathematical operations to the underlying autograd dispatcher, acting purely as a proxy.
 
-2. Autograd Engine (autograd/)
+ ### 2. Autograd Engine (autograd/)
 
 This directory contains the core logic for building and traversing the Directed Acyclic Graph.
 
@@ -43,7 +43,7 @@ This directory contains the core logic for building and traversing the Directed 
 
         Implements an unbroadcast utility function to handle NumPy's implicit broadcasting. This ensures that gradients flowing backward are correctly summed and reduced to match the original shapes of the input tensors.
 
-3. Neural Network API (nn/)
+### 3. Neural Network API (nn/)
 
 A high-level wrapper to facilitate the construction of neural network architectures.
 
@@ -53,14 +53,14 @@ A high-level wrapper to facilitate the construction of neural network architectu
 
     Linear (linear.py): A standard fully connected layer implementation managing weight and bias parameters, initialized using standard deviation scaling.
 
-4. Optimization (optim/)
+### 4. Optimization (optim/)
 
 Decoupled entirely from the computational graph, the optimizer is responsible for updating the numerical values of the parameters.
 
     SGD (optimizer.py): Implements standard Gradient Descent. It iterates through the provided parameters, updating their .data attributes using the computed .grad arrays and a specified learning rate. It strictly operates on the .data level to avoid triggering the autograd graph construction during weight updates. It also provides the zero_grad method to clear accumulated gradients between iterations.
 
 
-Examples
+## Examples you can try
 
 There are some examples you can run to test the Petitorch.
 
@@ -68,7 +68,7 @@ There are some examples you can run to test the Petitorch.
 
     training_example.py: We build a model MyModel, containing a linear layer. The program trains this model on generated data to mimic y = 3 * x + 2. This example shows that the Petitorch is functioning correctly.
 
-Future Work / To Be Implemented
+## Future Work / To Be Implemented
 
 While the core autograd engine and linear regression capabilities are fully functional, the framework requires further expansion to support modern deep learning models:
 
